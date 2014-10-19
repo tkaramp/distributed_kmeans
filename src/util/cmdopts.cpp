@@ -15,7 +15,7 @@ void show_executable_usage() {
     std::cout << "\t-d, --dimensions" << std::endl << "\t\tShows usage and type of parameters" << std::endl << std::endl;
     std::cout << "\t-f, --file" << std::endl << "\t\tPath to the points containing file" << std::endl << std::endl;
     std::cout << "\t-h, --help" << std::endl << "\t\tShows usage and type of parameters" << std::endl << std::endl;
-    std::cout << "\t-k" << std::endl << "\t\tNumber of cluster centers" << std::endl << std::endl;
+    std::cout << "\t-k" << std::endl << "\t\tNumber of cluster centroids" << std::endl << std::endl;
 }
 
 

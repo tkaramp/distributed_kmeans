@@ -7,9 +7,12 @@
 
 class kmeans {
 private:
-    std::vector<point> choose_k_random_centers(int , std::vector<point>);
+    std::vector<point> choose_k_random_centroids(int , std::vector<point>);
     double get_distance(point , point );
-    int assign_to_center(point , std::vector<point> );
+    int assign_to_centroid(point , std::vector<point> );
+    point calculate_new_centroid(std::vector<point> );
+    std::vector<point> update_centroids(std::vector<cluster> );
+    std::vector<cluster> update_clusters(std::vector<cluster> , std::vector<point> , bool &);
 
 public:
     std::vector<cluster> run(int , std::vector<point> );

@@ -6,19 +6,19 @@
 class cluster{
 
 private:
-    point cluster_center;
+    point cluster_centroid;
     std::vector<point> cluster_points;
 public:
 
-    inline cluster(point cluster_center) : cluster_center(cluster_center) {
+    inline cluster(point cluster_centroid) : cluster_centroid(cluster_centroid) {
     }
 
-    inline point center(){
-        return cluster_center;
+    inline point centroid(){
+        return cluster_centroid;
     }
 
-    inline point set_center(point center){
-        cluster_center = center;
+    inline point set_centroid(point centroid){
+        cluster_centroid = centroid;
     }
 
     inline std::vector<point> points(){
