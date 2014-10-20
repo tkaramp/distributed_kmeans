@@ -2,6 +2,7 @@
 #include <map>
 #include <vector>
 #include <algorithm>
+#include <assert.h>
 #include "src/util/cmdopts.hpp"
 #include "src/api/cluster.hpp"
 #include "src/algorithms/kmeans.hpp"
@@ -15,7 +16,15 @@ int main(int argc, char const ** argv) {
 
     system_params = cmdopts::init_system_parameters(argc, argv);
     points = cmdopts::parse_points(system_params["file"], atoi(system_params["dimensions"].c_str()));
+
+//    for (int i = 0; i < points.size(); i++)
+//        points[i].print();
+
     clusters = alg.run(atoi(system_params["k"].c_str()), points);
+
+    for (int i = 0; i < clusters.size(); i++)
+        clusters[i].print();
+
     return 0;
 }
 

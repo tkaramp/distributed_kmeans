@@ -1,0 +1,4 @@
+Tasks
+=======
+
+- decide error policy (assert, exit, else)
