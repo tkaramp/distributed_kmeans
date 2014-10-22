@@ -7,10 +7,17 @@
 
 namespace cmdopts {
 
+    static std::map<std::string, std::string> system_params;
+
     void show_executable_usage();
 
-    std::map<std::string, std::string> init_system_parameters(int, const char **);
+    void init_system_parameters(int, const char **);
 
     std::vector<point> parse_points(std::string file_path, int dimensions);
+
+    int get_int_value_by_system_param(char const *system_param);
+
+    std::string get_string_value_by_system_param(char const *system_param);
+
 }
 #endif

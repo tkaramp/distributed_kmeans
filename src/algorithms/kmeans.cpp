@@ -13,6 +13,9 @@ std::vector<point> kmeans::choose_k_random_centroids(int k, std::vector<point> p
     for (int i = 0; i < k; i++)
         centroids.push_back(points[i]);
 
+    for (int i = 0; i < k; i++)
+        assert(centroids[i].size() >0);
+
     return centroids;
 }
 
@@ -40,7 +43,6 @@ int  kmeans::assign_to_centroid(point p, std::vector<point> centroids) {
 
 
 point kmeans::calculate_new_centroid(std::vector<point> points) {
-    assert(points.size() > 0);
     int dimensions = points[0].dimensions();
     int num_of_points = points.size();
     point new_centroid(dimensions);
@@ -56,6 +58,7 @@ point kmeans::calculate_new_centroid(std::vector<point> points) {
     for (int axis = 0; axis < dimensions; axis++)
         new_centroid.set_coordinate(axis, new_centroid.coordinate(axis) / num_of_points);
 
+    assert(new_centroid.size() >0);
     return new_centroid;
 }
 
@@ -66,13 +69,15 @@ std::vector<point> kmeans::update_centroids(std::vector<cluster> clusters) {
 
     for(int centroid_id = 0; centroid_id < clusters.size(); centroid_id++) {
         std::vector<point> points = clusters[centroid_id].points();
-        point new_centroid(clusters[centroid_id].centroid().dimensions());
 
-        // TODO: maybe here assert makes more sence i cover that at calculate_new_centroid
-        if (points.size() == 0)
+        // TODO: maybe here assert makes more sense i cover that at calculate_new_centroid
+        if (points.size() == 0) {
             centroids.push_back(clusters[centroid_id].centroid());
+            continue;
+        }
 
         centroids.push_back(calculate_new_centroid(points));
+
     }
 
     //for (int i = 0; i < centroids.size(); i++)
@@ -82,10 +87,13 @@ std::vector<point> kmeans::update_centroids(std::vector<cluster> clusters) {
 }
 
 std::vector<cluster> kmeans::update_clusters(std::vector<cluster> old_clusters, std::vector<point> new_centroids, bool &converged) {
+
     int num_of_centroids = old_clusters.size();
+
     std::vector<cluster> new_clusters;
 
     new_clusters.reserve(num_of_centroids);
+
     // initialize new cluster with new centroids
     for (int centroid_id = 0; centroid_id < num_of_centroids; centroid_id++) {
         cluster c(new_centroids[centroid_id]);
@@ -94,6 +102,7 @@ std::vector<cluster> kmeans::update_clusters(std::vector<cluster> old_clusters, 
 
     for (int centroid_id = 0; centroid_id < num_of_centroids; centroid_id++) {
         std::vector<point> points = old_clusters[centroid_id].points();
+
         for (int i = 0; i < points.size(); i++) {
             int new_centroid_id = assign_to_centroid(points[i], new_centroids);
 
@@ -129,8 +138,7 @@ std::vector<cluster>  kmeans::run(int k, std::vector<point> points){
     }
 
     do {
-        for (int i = 0; i < clusters.size(); i++)
-            clusters[i].print();
+        converged = true;
         clusters = update_clusters(clusters, update_centroids(clusters), converged);
     }while(!converged);
 

@@ -13,15 +13,17 @@ void cmdopts::show_executable_usage() {
 
     // all available parameters
     std::cout << "\t-d, --dimensions" << std::endl << "\t\tShows usage and type of parameters" << std::endl << std::endl;
-    std::cout << "\t-f, --file" << std::endl << "\t\tPath to the points containing file" << std::endl << std::endl;
+    std::cout << "\t-nf, --nfiles" << std::endl << "\t\tIf a path containing multiple files is given, nfiles is the number of those files" << std::endl << std::endl;
+    std::cout << "\t-f, --files_path" << std::endl << "\t\tPath to the directory where several points containing file" \
+            "exist. Files names should be of the following format: file<[0-nfiles)>.txt" << std::endl << std::endl;
     std::cout << "\t-h, --help" << std::endl << "\t\tShows usage and type of parameters" << std::endl << std::endl;
     std::cout << "\t-k" << std::endl << "\t\tNumber of cluster centroids" << std::endl << std::endl;
 }
 
 
-std::map<std::string, std::string> cmdopts::init_system_parameters(int argc, char const **argv) {
-    std::map<std::string, std::string> system_params;
-    int vital_params_given = 0;
+void cmdopts::init_system_parameters(int argc, char const **argv) {
+
+    int vital_params_not_given = 4;
 
     for (int i = 1; i < argc; i = i + 2) {
         std::string flag = argv[i];
@@ -35,10 +37,10 @@ std::map<std::string, std::string> cmdopts::init_system_parameters(int argc, cha
             }
 
             assert(atoi(argv[i+1]) > 0);
-            system_params["dimensions"] = argv[i + 1];
-            vital_params_given++;
+            cmdopts::system_params["dimensions"] = argv[i + 1];
+            vital_params_not_given--;
         }
-        else if (!flag.compare("--file") || !flag.compare("-f")) {
+        else if (!flag.compare("--files_path") || !flag.compare("-fp")) {
             // check if there is no file parameter after the flag
             if (i + 1 == argc) {
                 std::cout << "No file parameter after flag: " << flag << std::endl;
@@ -46,8 +48,8 @@ std::map<std::string, std::string> cmdopts::init_system_parameters(int argc, cha
                 exit(EXIT_FAILURE);
             }
 
-            system_params["file"] = argv[i + 1];
-            vital_params_given++;
+            cmdopts::system_params["file_path"] = argv[i + 1];
+            vital_params_not_given--;
         }
         else if (!flag.compare("--help") || !flag.compare("-h")) {
             show_executable_usage();
@@ -62,9 +64,20 @@ std::map<std::string, std::string> cmdopts::init_system_parameters(int argc, cha
             }
 
             assert(atoi(argv[i+1]) > 0);
-            std::cout<<"k = " << argv[i+1]<<std::endl;
-            system_params["k"] = argv[i + 1];
-            vital_params_given++;
+
+            cmdopts::system_params["k"] = argv[i + 1];
+            vital_params_not_given--;
+        }
+        else if (!flag.compare("--nfiles") || !flag.compare("-nf")) {
+            // check if there is no file parameter after the flag
+            if (i + 1 == argc) {
+                std::cout << "No file parameter after flag: " << flag << std::endl;
+                show_executable_usage();
+                exit(EXIT_FAILURE);
+            }
+
+            cmdopts::system_params["nfiles"] = argv[i + 1];
+            vital_params_not_given--;
         }
         else {
             std::cout << "Unknown flag: " << flag << std::endl;
@@ -74,10 +87,7 @@ std::map<std::string, std::string> cmdopts::init_system_parameters(int argc, cha
     }
 
     // check if all vital parameters have been initialized
-    assert(vital_params_given >= 3);
-
-    return system_params;
-
+    assert(vital_params_not_given == 0);
 
 }
 
@@ -111,4 +121,20 @@ std::vector<point> cmdopts::parse_points(std::string file_path, int dimensions) 
     }
 
     return points;
+}
+
+int cmdopts::get_int_value_by_system_param(const char * system_param){
+    if (cmdopts::system_params.find(system_param) != cmdopts::system_params.end())
+        return atoi(cmdopts::system_params[system_param].c_str());
+
+    std::cout<<"Unknow parameter: "<<system_param<<"required"<<std::endl;
+    exit(EXIT_FAILURE);
+}
+
+std::string cmdopts::get_string_value_by_system_param(const char * system_param){
+    if (cmdopts::system_params.find(system_param) != cmdopts::system_params.end())
+        return cmdopts::system_params[system_param].c_str();
+
+    std::cout<<"Unknow parameter: "<<system_param<<"required"<<std::endl;
+    exit(EXIT_FAILURE);
 }

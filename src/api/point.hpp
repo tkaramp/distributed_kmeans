@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <limits>
+#include <assert.h>
 
 class point{
 
@@ -24,12 +25,16 @@ public:
     }
 
     inline void set_coordinate(int axis, double coordinate){
+        assert(point_size > axis);
         coordinates_vector[axis] = coordinate;
 
     }
 
     inline double coordinate(int axis){
+        double inf = std::numeric_limits<double>::infinity();
+        assert(point_size > 0);
         assert(axis < point_size && axis >= 0);
+        assert(coordinates_vector[axis] != inf);
         return coordinates_vector[axis];
     }
 

@@ -2,3 +2,4 @@ Tasks
 =======
 
 - decide error policy (assert, exit, else)
+- CMakeLists find how to make absolute path to relative
