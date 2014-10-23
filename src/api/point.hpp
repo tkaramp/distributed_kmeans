@@ -13,13 +13,13 @@ private:
     int point_size;
     int point_dimensions;
 protected:
-    int point_weight;
+    double point_weight;
 public:
 
     inline point(int point_dimensions) {
         assert(point_dimensions > 0);
         point::point_dimensions = point_dimensions;
-        coordinates_vector.reserve(point_dimensions);
+        coordinates_vector.reserve((unsigned long) point_dimensions);
         double inf = std::numeric_limits<double>::infinity();
         for (int axis = 0; axis < point_dimensions; axis++)
             coordinates_vector.push_back(inf);
@@ -46,12 +46,6 @@ public:
         assert(coordinates_vector[axis] != inf);
         return coordinates_vector[axis];
     }
-
-
-    inline std::vector<double>  coordinates() const{
-        return coordinates_vector;
-    }
-
 
 
     inline int size() const{

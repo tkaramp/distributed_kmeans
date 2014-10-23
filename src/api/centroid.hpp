@@ -18,7 +18,8 @@ public:
     inline void set_weight(double weight){
         point::point_weight = weight;
     }
-    inline void print(){
+
+    inline void print() const{
         std::cout<<"centroid<";
         for(int axis = 0; axis < size() - 1; axis++)
             std::cout<<point::coordinate(axis)<<", ";
