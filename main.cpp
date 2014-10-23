@@ -27,10 +27,10 @@ int main(int argc, char const ** argv) {
         total_clusters[file_number] = alg.run(cmdopts::get_int_value_by_system_param("k"), points);
     }
 
-//
-//    for(int file_number = 0; file_number < cmdopts::get_int_value_by_system_param("nfiles"); file_number++)
-//        for (int i = 0; i < total_clusters[file_number].size(); i++)
-//            total_clusters[file_number][i].print();
+
+    for(int file_number = 0; file_number < cmdopts::get_int_value_by_system_param("nfiles"); file_number++)
+        for (int i = 0; i < total_clusters[file_number].size(); i++)
+            total_clusters[file_number][i].print();
 
 
     return 0;

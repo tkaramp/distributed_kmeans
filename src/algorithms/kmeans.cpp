@@ -5,29 +5,27 @@
 #include "kmeans.hpp"
 #include <ctime>        // std::time
 
-std::vector<point> kmeans::choose_k_random_centroids(int k, std::vector<point> points){
-    std::vector<point> centroids;
+std::vector<centroid> kmeans::choose_k_random_centroids(int k, std::vector<point> points){
+    std::vector<centroid> centroids;
     std::srand ( unsigned ( std::time(0) ) );
     std::random_shuffle(points.begin(), points.end());
 
+    //TODO make random choice more efficient for large N
     for (int i = 0; i < k; i++)
         centroids.push_back(points[i]);
-
-    for (int i = 0; i < k; i++)
-        assert(centroids[i].size() >0);
 
     return centroids;
 }
 
-double  kmeans::get_distance(point p1, point p2) {
+double  kmeans::get_distance(point p, centroid c) {
     double sum = 0;
 
-    for (int i = 0; i < p1.size(); i++)
-        sum += pow(p1.coordinate(i) - p2.coordinate(i), 2.0);
+    for (int i = 0; i < p.size(); i++)
+        sum += pow(p.coordinate(i) - c.coordinate(i), 2.0);
     return sqrt(sum);
 }
 
-int  kmeans::assign_to_centroid(point p, std::vector<point> centroids) {
+int  kmeans::assign_to_centroid(point p, std::vector<centroid> centroids) {
     int centroid_id = 0;
     double min_distance = get_distance(p, centroids[0]), distance;
 
@@ -42,14 +40,12 @@ int  kmeans::assign_to_centroid(point p, std::vector<point> centroids) {
 }
 
 
-point kmeans::calculate_new_centroid(std::vector<point> points) {
+centroid kmeans::calculate_new_centroid(std::vector<point> points) {
     int dimensions = points[0].dimensions();
     int num_of_points = points.size();
-    point new_centroid(dimensions);
-
-    for (int axis = 0; axis < dimensions; axis++)
-        new_centroid.set_coordinate(axis, points[0].coordinate(axis));
-
+    // initialise centroid as its first point and then its other centoids' coordinates will be added and
+    // in the end that sum will be divided with its points size
+    centroid new_centroid(points[0]);
 
     for (int i = 1; i < num_of_points; i++)
         for (int axis = 0; axis < dimensions; axis++ )
@@ -62,17 +58,16 @@ point kmeans::calculate_new_centroid(std::vector<point> points) {
     return new_centroid;
 }
 
-std::vector<point> kmeans::update_centroids(std::vector<cluster> clusters) {
+std::vector<centroid> kmeans::update_centroids(std::vector<cluster> clusters) {
     int num_of_centroids = clusters.size();
-    std::vector<point> centroids;
+    std::vector<centroid> centroids;
     centroids.reserve(num_of_centroids);
 
     for(int centroid_id = 0; centroid_id < clusters.size(); centroid_id++) {
         std::vector<point> points = clusters[centroid_id].points();
 
-        // TODO: maybe here assert makes more sense i cover that at calculate_new_centroid
         if (points.size() == 0) {
-            centroids.push_back(clusters[centroid_id].centroid());
+            centroids.push_back(clusters[centroid_id].get_centroid());
             continue;
         }
 
@@ -86,7 +81,7 @@ std::vector<point> kmeans::update_centroids(std::vector<cluster> clusters) {
     return centroids;
 }
 
-std::vector<cluster> kmeans::update_clusters(std::vector<cluster> old_clusters, std::vector<point> new_centroids, bool &converged) {
+std::vector<cluster> kmeans::update_clusters(std::vector<cluster> old_clusters, std::vector<centroid> new_centroids, bool &converged) {
 
     int num_of_centroids = old_clusters.size();
 
@@ -117,7 +112,7 @@ std::vector<cluster> kmeans::update_clusters(std::vector<cluster> old_clusters, 
 }
 
 std::vector<cluster>  kmeans::run(int k, std::vector<point> points){
-    std::vector<point> centroids;
+    std::vector<centroid> centroids;
     std::vector<cluster> clusters;
     centroids.reserve(k);
     clusters.reserve(k);

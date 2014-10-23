@@ -4,25 +4,24 @@
 
 #include "iostream"
 #include "vector"
-#include "point.hpp"
-
+#include "centroid.hpp"
 
 class cluster{
 
 private:
-    point cluster_centroid;
+    centroid cluster_centroid;
     std::vector<point> cluster_points;
 public:
 
-    inline cluster(point cluster_centroid) : cluster_centroid(cluster_centroid) {
+    inline cluster(centroid cluster_centroid) : cluster_centroid(cluster_centroid) {
     }
 
-    inline point centroid(){
+    inline centroid get_centroid(){
         return cluster_centroid;
     }
 
-    inline void set_centroid(point centroid){
-        cluster_centroid = centroid;
+    inline void set_centroid(centroid c){
+        cluster_centroid = c;
     }
 
     inline std::vector<point> points(){
@@ -40,14 +39,14 @@ public:
 
     inline void print(){
         std::cout<<"cluster:\n";
-        std::cout<<"\t\tcentroid:\t";
-        centroid().print();
+        std::cout<<"\t";
+        get_centroid().print();
         std::cout<<std::endl;
         for(int point_id = 0; point_id < cluster_points.size() - 1; point_id++) {
-            std::cout<<"\t\tpoint:\t\t";
+            std::cout<<"\t\t";
             cluster_points[point_id].print();
         }
-        std::cout<<"\t\tpoint:\t\t";
+        std::cout<<"\t\t";
         cluster_points[cluster_points.size() - 1].print();
 
     }
