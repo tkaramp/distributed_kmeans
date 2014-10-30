@@ -43,7 +43,8 @@ int  kmeans::assign_to_centroid(point p, std::vector<centroid> centroids) {
 centroid kmeans::calculate_new_centroid(std::vector<point> points) {
     int dimensions = points[0].dimensions();
     unsigned long num_of_points = points.size();
-    double weight_sum = 0;
+    double weight_sum = 0.0;
+
     // initialise centroid as its first point and then its other centoids' coordinates will be added and
     // in the end that sum will be divided with its points size
     centroid new_centroid(dimensions);
@@ -55,7 +56,7 @@ centroid kmeans::calculate_new_centroid(std::vector<point> points) {
     for (unsigned long i = 1; i < num_of_points; i++) {
         weight_sum += points[i].weight();
         for (int axis = 0; axis < dimensions; axis++)
-            new_centroid.set_coordinate(axis, new_centroid.coordinate(axis) + points[i].coordinate(axis));
+            new_centroid.set_coordinate(axis, new_centroid.coordinate(axis) + points[i].weight() * points[i].coordinate(axis));
     }
 
     for (int axis = 0; axis < dimensions; axis++)
@@ -99,22 +100,22 @@ std::vector<cluster> kmeans::update_clusters(std::vector<cluster> old_clusters, 
     // initialize new cluster with new centroids
     for (int centroid_id = 0; centroid_id < num_of_centroids; centroid_id++) {
         cluster c(new_centroids[centroid_id]);
+        //c.print();
         new_clusters.push_back(c);
     }
-
+   
     for (int centroid_id = 0; centroid_id < num_of_centroids; centroid_id++) {
         std::vector<point> points = old_clusters[centroid_id].points();
 
         for (int i = 0; i < points.size(); i++) {
             int new_centroid_id = assign_to_centroid(points[i], new_centroids);
 
-            if(new_centroid_id != centroid_id)
+            if (new_centroid_id != centroid_id)
                 converged = false;
 
             new_clusters[new_centroid_id].add_cluster_point(points[i]);
         }
     }
-
     return new_clusters;
 }
 
@@ -126,13 +127,11 @@ std::vector<cluster>  kmeans::run(int k, std::vector<point> points){
     bool converged;
     // choose initial centroids. Note that they can be the same
     centroids = choose_k_random_centroids(k, points);
-
     // initialize the structure with centroid's values
     for (int centroid_id = 0; centroid_id < centroids.size(); centroid_id++) {
         cluster c(centroids[centroid_id]);
         clusters.push_back(c);
     }
-
     // assign each point to the nearest centroid
     for (int i = 0; i < points.size(); i++) {
         int centroid_id = assign_to_centroid(points[i], centroids);

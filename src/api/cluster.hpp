@@ -42,12 +42,17 @@ public:
         std::cout<<"\t";
         get_centroid().print();
         std::cout<<std::endl;
-        for(int point_id = 0; point_id < cluster_points.size() - 1; point_id++) {
+
+        long bound = cluster_points.size() - 1;
+
+        for(int point_id = 0; point_id < bound; point_id++) {
             std::cout<<"\t\t";
             cluster_points[point_id].print();
         }
         std::cout<<"\t\t";
-        cluster_points[cluster_points.size() - 1].print();
+
+        if (cluster_points.size() > 0)
+            cluster_points[cluster_points.size() - 1].print();
 
     }
 
